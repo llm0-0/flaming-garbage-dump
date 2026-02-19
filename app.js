@@ -1,16 +1,16 @@
 const screens = [...document.querySelectorAll('[data-screen]')];
 
 const LETTERS = [
-  { char: 'അ', sound: 'a', example: 'അമ്മ (amma)' },
-  { char: 'ആ', sound: 'aa', example: 'ആട് (aadu)' },
-  { char: 'ഇ', sound: 'i', example: 'ഇല (ila)' },
-  { char: 'ഈ', sound: 'ee', example: 'ഈച്ച (eecha)' },
-  { char: 'ഉ', sound: 'u', example: 'ഉപ്പ് (uppu)' },
-  { char: 'ക', sound: 'ka', example: 'കടൽ (kadal)' },
-  { char: 'മ', sound: 'ma', example: 'മരം (maram)' },
-  { char: 'പ', sound: 'pa', example: 'പാൽ (paal)' },
-  { char: 'ത', sound: 'tha', example: 'തല (thala)' },
-  { char: 'ന', sound: 'na', example: 'നദി (nadi)' },
+  { char: 'അ', sound: 'a', example: 'അമ്മ (amma)', audio: 'audio/letters/a.mp3' },
+  { char: 'ആ', sound: 'aa', example: 'ആട് (aadu)', audio: 'audio/letters/aa.mp3' },
+  { char: 'ഇ', sound: 'i', example: 'ഇല (ila)', audio: 'audio/letters/i.mp3' },
+  { char: 'ഈ', sound: 'ee', example: 'ഈച്ച (eecha)', audio: 'audio/letters/ee.mp3' },
+  { char: 'ഉ', sound: 'u', example: 'ഉപ്പ് (uppu)', audio: 'audio/letters/u.mp3' },
+  { char: 'ക', sound: 'ka', example: 'കടൽ (kadal)', audio: 'audio/letters/ka.mp3' },
+  { char: 'മ', sound: 'ma', example: 'മരം (maram)', audio: 'audio/letters/ma.mp3' },
+  { char: 'പ', sound: 'pa', example: 'പാൽ (paal)', audio: 'audio/letters/pa.mp3' },
+  { char: 'ത', sound: 'tha', example: 'തല (thala)', audio: 'audio/letters/tha.mp3' },
+  { char: 'ന', sound: 'na', example: 'നദി (nadi)', audio: 'audio/letters/na.mp3' },
 ];
 
 const UNIT = {
@@ -28,9 +28,24 @@ const UNIT = {
 };
 
 const WORD_QUESTIONS = [
-  { word: ['അ', 'മ', 'മ'], audioText: 'amma', prompt: 'Build the word for: amma' },
-  { word: ['ക', 'പ'], audioText: 'kapa', prompt: 'Build the word for: kapa' },
-  { word: ['പ', 'ന'], audioText: 'pana', prompt: 'Build the word for: pana' },
+  {
+    word: ['അ', 'മ', 'മ'],
+    audioText: 'അമ്മ',
+    prompt: 'Build the word for the audio clip.',
+    audio: 'audio/words/amma.mp3',
+  },
+  {
+    word: ['ക', 'പ'],
+    audioText: 'കപ',
+    prompt: 'Build the word for the audio clip.',
+    audio: 'audio/words/kapa.mp3',
+  },
+  {
+    word: ['പ', 'ന'],
+    audioText: 'പന',
+    prompt: 'Build the word for the audio clip.',
+    audio: 'audio/words/pana.mp3',
+  },
 ];
 
 const state = {
@@ -69,10 +84,37 @@ function shuffle(array) {
   return arr;
 }
 
-function speak(text) {
+let sharedAudio;
+
+async function playAudioFile(src) {
+  if (!src) return false;
+  if (!sharedAudio) {
+    sharedAudio = new Audio();
+    sharedAudio.preload = 'auto';
+  }
+  sharedAudio.pause();
+  sharedAudio.currentTime = 0;
+  sharedAudio.src = src;
+  try {
+    await sharedAudio.play();
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
+
+function speak(text, lang = 'ml-IN') {
   if ('speechSynthesis' in window) {
     const msg = new SpeechSynthesisUtterance(text);
     msg.rate = 0.8;
+    msg.lang = lang;
+
+    const voices = speechSynthesis.getVoices();
+    const malayalamVoice = voices.find((voice) => voice.lang?.toLowerCase().startsWith('ml'));
+    if (malayalamVoice) {
+      msg.voice = malayalamVoice;
+    }
+
     speechSynthesis.cancel();
     speechSynthesis.speak(msg);
     return;
@@ -87,6 +129,13 @@ function speak(text) {
   gain.connect(context.destination);
   osc.start();
   osc.stop(context.currentTime + 0.35);
+}
+
+async function playPromptAudio({ audioSrc, fallbackText, fallbackLang = 'ml-IN' }) {
+  const played = await playAudioFile(audioSrc);
+  if (!played && fallbackText) {
+    speak(fallbackText, fallbackLang);
+  }
 }
 
 function unitPercent() {
@@ -210,14 +259,16 @@ function createPracticeSet() {
     const q1 = {
       type: 'letterToSound',
       prompt: `What sound does this letter make: ${q1Char}?`,
-      playText: letterByChar(q1Char).sound,
+      audioSrc: letterByChar(q1Char).audio,
+      playText: q1Char,
       correct: letterByChar(q1Char).sound,
       options: shuffle([letterByChar(q1Char).sound, ...shuffle(LETTERS.map((l) => l.sound).filter((s) => s !== letterByChar(q1Char).sound)).slice(0, 3)]),
     };
     const q2 = {
       type: 'soundToLetter',
       prompt: 'Which letter matches this sound?',
-      playText: letterByChar(q2Char).sound,
+      audioSrc: letterByChar(q2Char).audio,
+      playText: q2Char,
       correct: q2Char,
       options: shuffle([q2Char, ...randomDistractors(q2Char)]),
     };
@@ -278,7 +329,8 @@ function buildQuizQuestions() {
   const soundToLetter = shuffle(LETTERS).slice(0, 3).map((l) => ({
     type: 'soundToLetter',
     prompt: 'Listen and pick the correct letter.',
-    audioText: l.sound,
+    audioText: l.char,
+    audioSrc: l.audio,
     correct: l.char,
     options: shuffle([l.char, ...randomDistractors(l.char)]),
   }));
@@ -286,7 +338,8 @@ function buildQuizQuestions() {
   const letterToSound = shuffle(LETTERS).slice(0, 3).map((l) => ({
     type: 'letterToSound',
     prompt: `Which sound matches this letter: ${l.char}?`,
-    audioText: l.sound,
+    audioText: l.char,
+    audioSrc: l.audio,
     correct: l.sound,
     options: shuffle([l.sound, ...shuffle(LETTERS.map((x) => x.sound).filter((s) => s !== l.sound)).slice(0, 3)]),
   }));
@@ -295,6 +348,7 @@ function buildQuizQuestions() {
     type: 'wordBuild',
     prompt: w.prompt,
     audioText: w.audioText,
+    audioSrc: w.audio,
     correct: w.word,
     letterBank: shuffle([...w.word, ...shuffle(LETTERS.map((l) => l.char).filter((c) => !w.word.includes(c))).slice(0, 3)]),
   }));
@@ -325,7 +379,9 @@ function renderQuizQuestion() {
   const wordBuilder = document.getElementById('quiz-word-builder');
   const playBtn = document.getElementById('quiz-play-audio');
 
-  playBtn.onclick = () => speak(q.audioText);
+  playBtn.onclick = () => {
+    playPromptAudio({ audioSrc: q.audioSrc, fallbackText: q.audioText });
+  };
 
   choiceArea.innerHTML = '';
   wordBuilder.classList.add('hidden');
@@ -453,7 +509,7 @@ function bindEvents() {
     const lesson = state.activeUnit.lessons[state.currentLessonIdx];
     const char = lesson.letters[state.lessonCardIdx];
     const item = letterByChar(char);
-    speak(`${item.char} ... ${item.sound}`);
+    playPromptAudio({ audioSrc: item.audio, fallbackText: item.char });
   });
 
   document.getElementById('previous-card').addEventListener('click', () => {
@@ -473,7 +529,9 @@ function bindEvents() {
 
   document.getElementById('practice-play-audio').addEventListener('click', () => {
     const q = state.lessonPracticeSet[state.lessonPracticeIdx];
-    if (q?.playText) speak(q.playText);
+    if (q?.playText) {
+      playPromptAudio({ audioSrc: q.audioSrc, fallbackText: q.playText });
+    }
   });
 
   document.getElementById('practice-continue').addEventListener('click', () => {
