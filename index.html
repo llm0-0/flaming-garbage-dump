@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Malayalam Learning App Prototype</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <h1>Learn Malayalam</h1>
+        <p class="subtitle">GitHub-hosted clickable prototype</p>
+      </header>
+
+      <section id="screen-onboarding" class="screen active" data-screen>
+        <h2>Welcome 👋</h2>
+        <p>What is your main goal?</p>
+
+        <fieldset>
+          <legend class="sr-only">Learning goal</legend>
+          <label><input type="radio" name="goal" value="family" checked /> Speak with family</label>
+          <label><input type="radio" name="goal" value="script" /> Read Malayalam script</label>
+          <label><input type="radio" name="goal" value="travel" /> Travel</label>
+          <label><input type="radio" name="goal" value="culture" /> Cultural interest</label>
+        </fieldset>
+
+        <p class="spacer-sm">Daily practice target:</p>
+        <div class="button-row" role="group" aria-label="Daily target">
+          <button type="button" class="choice active" data-goal-min="5">5 min</button>
+          <button type="button" class="choice" data-goal-min="10">10 min</button>
+          <button type="button" class="choice" data-goal-min="15">15 min</button>
+        </div>
+
+        <button type="button" class="primary" data-next="home">Continue →</button>
+      </section>
+
+      <section id="screen-home" class="screen" data-screen>
+        <div class="between">
+          <h2>Hi, Learner 👋</h2>
+          <p id="streak">🔥 Streak: 3</p>
+        </div>
+        <p id="today-goal">Today's Goal: 5 min</p>
+        <progress id="goal-progress" max="5" value="2">40%</progress>
+        <p id="goal-progress-label">2/5 min</p>
+
+        <div class="card">
+          <h3>Continue Learning</h3>
+          <p>Unit 1: Malayalam Letters</p>
+          <p>Lesson 3 of 10</p>
+          <button type="button" class="primary" data-next="lesson">Start Lesson</button>
+        </div>
+      </section>
+
+      <section id="screen-lesson" class="screen" data-screen>
+        <div class="between">
+          <button type="button" class="ghost" data-next="home">← Home</button>
+          <p id="lesson-progress">1 of 3 cards</p>
+        </div>
+
+        <article class="letter-card">
+          <p id="letter-display" class="letter">അ</p>
+          <p id="pronunciation">Pronunciation: "a"</p>
+          <p id="example">Example: അപ്പം (appam)</p>
+        </article>
+
+        <div class="button-row">
+          <button type="button" id="previous-card">Previous</button>
+          <button type="button" id="next-card" class="primary">Next</button>
+        </div>
+      </section>
+
+      <section id="screen-quiz" class="screen" data-screen>
+        <div class="between">
+          <h2>Quiz</h2>
+          <p id="quiz-progress">Q1 / Q3</p>
+        </div>
+        <p>Listen and pick the correct letter</p>
+        <button type="button" id="play-sound" class="ghost">🔊 Play Sound</button>
+
+        <div class="answer-grid" id="answer-grid"></div>
+        <p id="quiz-feedback" class="feedback">Select an answer to continue.</p>
+
+        <button type="button" id="quiz-continue" class="primary" disabled>Continue</button>
+      </section>
+
+      <section id="screen-result" class="screen" data-screen>
+        <h2>Lesson Complete 🎉</h2>
+        <p id="result-score">Score: 0/3</p>
+        <p id="result-time">Time: ~5m</p>
+        <p id="result-streak">Streak: 4 days 🔥</p>
+
+        <div class="button-row">
+          <button type="button" id="review">Review Mistakes</button>
+          <button type="button" class="primary" data-next="home">Next Lesson →</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
