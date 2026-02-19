@@ -10,58 +10,51 @@
     <main class="app-shell">
       <header class="app-header">
         <h1>Learn Malayalam</h1>
-        <p class="subtitle">GitHub-hosted clickable prototype</p>
+        <p class="subtitle">Unit-based clickable prototype</p>
       </header>
 
       <section id="screen-onboarding" class="screen active" data-screen>
         <h2>Welcome 👋</h2>
-        <p>What is your main goal?</p>
-
-        <fieldset>
-          <legend class="sr-only">Learning goal</legend>
-          <label><input type="radio" name="goal" value="family" checked /> Speak with family</label>
-          <label><input type="radio" name="goal" value="script" /> Read Malayalam script</label>
-          <label><input type="radio" name="goal" value="travel" /> Travel</label>
-          <label><input type="radio" name="goal" value="culture" /> Cultural interest</label>
-        </fieldset>
-
-        <p class="spacer-sm">Daily practice target:</p>
+        <p>Choose your daily goal:</p>
         <div class="button-row" role="group" aria-label="Daily target">
           <button type="button" class="choice active" data-goal-min="5">5 min</button>
           <button type="button" class="choice" data-goal-min="10">10 min</button>
           <button type="button" class="choice" data-goal-min="15">15 min</button>
         </div>
-
         <button type="button" class="primary" data-next="home">Continue →</button>
       </section>
 
       <section id="screen-home" class="screen" data-screen>
         <div class="between">
-          <h2>Hi, Learner 👋</h2>
-          <p id="streak">🔥 Streak: 3</p>
+          <h2>Units</h2>
+          <p id="daily-goal-label">Goal: 5 min/day</p>
         </div>
-        <p id="today-goal">Today's Goal: 5 min</p>
-        <progress id="goal-progress" max="5" value="2">40%</progress>
-        <p id="goal-progress-label">2/5 min</p>
+        <div id="units-list"></div>
+      </section>
 
-        <div class="card">
-          <h3>Continue Learning</h3>
-          <p>Unit 1: Malayalam Letters</p>
-          <p>Lesson 3 of 10</p>
-          <button type="button" class="primary" data-next="lesson">Start Lesson</button>
+      <section id="screen-unit" class="screen" data-screen>
+        <div class="between">
+          <button type="button" class="ghost" data-next="home">← Home</button>
+          <p id="unit-progress-label">0% complete</p>
         </div>
+        <h2 id="unit-title">Unit</h2>
+        <p id="unit-rules">Finish each lesson in order. Score 85%+ on quiz to pass unit.</p>
+        <div id="unit-steps"></div>
       </section>
 
       <section id="screen-lesson" class="screen" data-screen>
         <div class="between">
-          <button type="button" class="ghost" data-next="home">← Home</button>
-          <p id="lesson-progress">1 of 3 cards</p>
+          <button type="button" class="ghost" data-next="unit">← Unit</button>
+          <p id="lesson-header">Lesson 1</p>
         </div>
+        <h2 id="lesson-title">Flashcards</h2>
+        <p id="lesson-progress">Card 1/3</p>
 
         <article class="letter-card">
           <p id="letter-display" class="letter">അ</p>
-          <p id="pronunciation">Pronunciation: "a"</p>
-          <p id="example">Example: അപ്പം (appam)</p>
+          <p id="sound-display">Sound: /a/</p>
+          <button type="button" id="play-letter-audio" class="ghost">🔊 Play audio</button>
+          <p id="example-word">Example: അമ്മ (amma)</p>
         </article>
 
         <div class="button-row">
@@ -70,29 +63,46 @@
         </div>
       </section>
 
+      <section id="screen-practice" class="screen" data-screen>
+        <div class="between">
+          <h2 id="practice-title">Lesson Practice</h2>
+          <p id="practice-progress">1/2</p>
+        </div>
+        <p id="practice-prompt">Prompt</p>
+        <button type="button" id="practice-play-audio" class="ghost">🔊 Play audio</button>
+        <div class="answer-grid" id="practice-answer-grid"></div>
+        <p id="practice-feedback" class="feedback">Pick one answer.</p>
+        <button type="button" id="practice-continue" class="primary" disabled>Continue</button>
+      </section>
+
       <section id="screen-quiz" class="screen" data-screen>
         <div class="between">
-          <h2>Quiz</h2>
-          <p id="quiz-progress">Q1 / Q3</p>
+          <h2>Unit Quiz</h2>
+          <p id="quiz-progress">Q1/8</p>
         </div>
-        <p>Listen and pick the correct letter</p>
-        <button type="button" id="play-sound" class="ghost">🔊 Play Sound</button>
+        <p id="quiz-type-label" class="small"></p>
+        <p id="quiz-prompt">Prompt</p>
+        <button type="button" id="quiz-play-audio" class="ghost">🔊 Play audio</button>
 
-        <div class="answer-grid" id="answer-grid"></div>
-        <p id="quiz-feedback" class="feedback">Select an answer to continue.</p>
+        <div id="quiz-choice-area" class="answer-grid"></div>
 
+        <div id="quiz-word-builder" class="word-builder hidden">
+          <p class="small">Drag letters into the answer slots:</p>
+          <div id="word-drop-zone" class="drop-zone"></div>
+          <div id="word-letter-bank" class="letter-bank"></div>
+          <button type="button" id="check-word" class="secondary">Check word</button>
+        </div>
+
+        <p id="quiz-feedback" class="feedback">Answer to continue.</p>
         <button type="button" id="quiz-continue" class="primary" disabled>Continue</button>
       </section>
 
       <section id="screen-result" class="screen" data-screen>
-        <h2>Lesson Complete 🎉</h2>
-        <p id="result-score">Score: 0/3</p>
-        <p id="result-time">Time: ~5m</p>
-        <p id="result-streak">Streak: 4 days 🔥</p>
-
+        <h2 id="result-title">Result</h2>
+        <p id="result-score">Score: 0%</p>
+        <p id="result-detail">Need 85% to pass.</p>
         <div class="button-row">
-          <button type="button" id="review">Review Mistakes</button>
-          <button type="button" class="primary" data-next="home">Next Lesson →</button>
+          <button type="button" id="result-primary" class="primary">Back to Unit</button>
         </div>
       </section>
     </main>
