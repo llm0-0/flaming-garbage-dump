@@ -1,0 +1,22 @@
+{
+  "notes": [
+    "Put direct MP3 URLs from sources you are legally allowed to use.",
+    "Recommended sources: Wikimedia Commons (CC licenses), your own recordings, or licensed provider exports.",
+    "Do not use copyrighted audio without permission."
+  ],
+  "files": [
+    { "path": "audio/letters/a.mp3", "url": "https://example.com/a.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/letters/aa.mp3", "url": "https://example.com/aa.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/letters/i.mp3", "url": "https://example.com/i.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/letters/ee.mp3", "url": "https://example.com/ee.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/letters/u.mp3", "url": "https://example.com/u.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/letters/ka.mp3", "url": "https://example.com/ka.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/letters/ma.mp3", "url": "https://example.com/ma.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/letters/pa.mp3", "url": "https://example.com/pa.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/letters/tha.mp3", "url": "https://example.com/tha.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/letters/na.mp3", "url": "https://example.com/na.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/words/amma.mp3", "url": "https://example.com/amma.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/words/kapa.mp3", "url": "https://example.com/kapa.mp3", "license": "CC BY-SA 4.0" },
+    { "path": "audio/words/pana.mp3", "url": "https://example.com/pana.mp3", "license": "CC BY-SA 4.0" }
+  ]
+}
